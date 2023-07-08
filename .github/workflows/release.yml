@@ -30,32 +30,27 @@ jobs:
           echo "lan_cidr=https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/private.txt" >> $GITHUB_ENV
           echo "telegram_cidr=https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/telegram.txt" >> $GITHUB_ENV
         shell: bash
-        
+
       - name: Generate icloud.txt file
         run: |
-          echo "payload:" > icloud.txt
           curl -sSL ${custom_icloud} | grep -E "^(full|domain):" | awk -F ':' '{printf "+.%s\n", $2}' | sed "s/|/'/g" >> icloud.txt
 
       - name: Generate apple.txt file
         run: |
-          echo "payload:" > apple.txt
           curl -sSL ${felixonmars_apple} | perl -ne '/^server=\/([^\/]+)\// && print "+.$1\n"' | sed "s/|/'/g" >> apple.txt
 
       - name: Generate direct.txt file
         run: |
-          echo "payload:" > direct.txt
           curl -sSL ${Loyalsoldier_direct} | grep -Ev "^(regexp|keyword):" | perl -ne '/^(full:)([-_a-zA-Z0-9]+(\.[-_a-zA-Z0-9]+)*)/ && print "$2\n"' | sed "s/|/'/g" >> direct.txt
           curl -sSL ${Loyalsoldier_direct} | grep -Ev "^(regexp|keyword|full):" | perl -ne '/^(domain:)?([-_a-zA-Z0-9]+(\.[-_a-zA-Z0-9]+)*)/ && print "+.$2\n"' | sed "s/|/'/g" >> direct.txt
 
       - name: Generate proxy.txt file
         run: |
-          echo "payload:" > proxy.txt
           curl -sSL ${Loyalsoldier_proxy} | grep -Ev "^(regexp|keyword):" | perl -ne '/^(full:)([-_a-zA-Z0-9]+(\.[-_a-zA-Z0-9]+)*)/ && print "$2\n"' | sed "s/|/'/g" >> proxy.txt
           curl -sSL ${Loyalsoldier_proxy} | grep -Ev "^(regexp|keyword|full):" | perl -ne '/^(domain:)?([-_a-zA-Z0-9]+(\.[-_a-zA-Z0-9]+)*)/ && print "+.$2\n"' | sed "s/|/'/g" >> proxy.txt
 
       - name: Generate telegramcidr.txt file
         run: |
-          echo "payload:" > telegramcidr.txt
           curl -sSL ${telegram_cidr} | perl -ne '/(.+\/\d+)/ && print "$1\n"' | sed "s/|/'/g" >> telegramcidr.txt
 
       - name: Move files to publish directory
