@@ -2,7 +2,7 @@ name: Generate RULE-SET text for Premium Edition of Clash
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 6 * * *"
+    - cron: "30 22 * * *"
   push:
     branches:
       - master
@@ -10,7 +10,6 @@ on:
       - "**/README.md"
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Set variables
@@ -81,7 +80,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-       - name: Git push assets to "release" branch
+      - name: Git push assets to "release" branch
         run: |
           cd publish || exit 1
           git init
@@ -91,14 +90,11 @@ jobs:
           git add .
           git commit -m "${{ env.RELEASE_NAME }}"
           git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
-          git push -f -u origin release
+          git push -f origin release
 
       - name: Purge jsdelivr CDN
         run: |
           cd publish || exit 1
           for file in $(ls); do
             curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/${file}"
-          done
-          for file in $(ls ruleset); do
-            curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/ruleset/${file}"
           done
