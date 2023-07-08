@@ -1,4 +1,4 @@
-name: Generate RULE-SET for Premium Edition of Clash
+name: Generate RULE-SET text for Premium Edition of Clash
 on:
   workflow_dispatch:
   schedule:
